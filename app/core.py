@@ -255,6 +255,4 @@ def generate(model: NGramModel, prefix: str = "", max_words: int = 40, sample: b
 
 
 # --- Milestone 4: Build a command-line interface for agents to get suggestions.
-# Hint: Design a CLI to interact with the text generation function.
-def milestone_4():  # TODO(milestone 4)
-    raise NotImplementedError("TODO(milestone 4)")
+# The CLI lives in app/cli.py and calls the functions above.

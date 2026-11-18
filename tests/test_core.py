@@ -98,7 +98,25 @@ def test_sampling_is_seeded_and_category_changes_the_reply(corpus):
 
 
 # Milestone 4: Build a command-line interface for agents to get suggestions.
-@pytest.mark.skip(reason="remove this line when you start milestone 4")
-def test_milestone_4():
-    raise NotImplementedError("write the test for milestone 4")
+from app.cli import interactive, main  # noqa: E402
 
+
+def test_cli_suggest_and_complete(capsys):
+    main(["suggest", "thank you for", "--top", "3"])
+    out = capsys.readouterr().out
+    assert out.splitlines()[0].startswith("1. reaching")
+    main(["complete", "your refund has been", "-c", "refund"])
+    assert capsys.readouterr().out.lower().startswith("your refund has been")
+
+
+def test_cli_evaluate_prints_a_table(capsys):
+    main(["evaluate"])
+    out = capsys.readouterr().out
+    assert "perplexity" in out and "interpolated" in out
+
+
+def test_interactive_lets_the_agent_pick_suggestions(corpus):
+    model = core.train(path=corpus)
+    answers = iter(["thank", "you", "1", ""])  # type two words, pick suggestion 1, finish
+    final = interactive(model, inp=lambda _: next(answers), out=lambda *_: None)
+    assert final == "Thank you for"
