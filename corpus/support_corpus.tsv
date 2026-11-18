@@ -1,0 +1,52 @@
+category	customer	agent
+shipping	where is my order <order_id>? i ordered it last week.	hi there, thank you for reaching out! i have checked your order <order_id> and it has been shipped. you will receive a tracking link by email within 24 hours.
+shipping	my package still has not arrived, order <order_id>.	thank you for your patience. i have checked your order and it is currently in transit. it should arrive within 2 to 3 business days.
+shipping	can you tell me when my order will be delivered? email me at <email>	hi, thank you for contacting us. your order is out for delivery today. we have sent the tracking details to your email address.
+shipping	the tracking page has not updated in four days.	i am sorry for the delay. i have checked with our courier partner and your package is in transit. it should arrive within 2 to 3 business days.
+shipping	do you ship to mysuru?	yes, we ship to all major cities in india. standard delivery takes 3 to 5 business days.
+shipping	can i change my delivery address? call me on <phone>.	thank you for reaching out. i have updated the delivery address on your order. you will receive a confirmation email shortly.
+shipping	why is my order taking so long?	i am sorry for the delay. your order is currently in transit and should arrive within 2 to 3 business days. thank you for your patience.
+shipping	my order says delivered but i did not get it.	i am sorry to hear that. i have raised a request with our courier partner to locate your package. we will update you by email within 48 hours.
+shipping	is express delivery available?	yes, express delivery is available for most pin codes. express orders are delivered within 1 to 2 business days.
+shipping	order <order_id> was supposed to come yesterday.	i am sorry for the delay. i have checked your order <order_id> and it is currently in transit. it should arrive within 2 to 3 business days.
+returns	how do i return a shirt that does not fit?	thank you for reaching out. you can return the item within 30 days of delivery. please go to my orders and select return item to start the process.
+returns	i want to return my headphones, they are faulty.	i am sorry to hear that the item is faulty. you can return the item within 30 days of delivery. we will arrange a free pickup from your address.
+returns	can i exchange my shoes for a bigger size?	yes, you can exchange the item within 30 days of delivery. please go to my orders and select exchange item to choose a new size.
+returns	when will the pickup for my return happen? my number is <phone>.	thank you for your patience. your return pickup is scheduled within 2 business days. you will receive an sms before the pickup.
+returns	the return option is not showing for my order.	i am sorry for the trouble. some items are not eligible for return. i have checked your order and raised a return request for you manually.
+returns	i returned the item but the status has not changed.	thank you for reaching out. once the returned item reaches our warehouse, the status will be updated within 2 business days.
+returns	can i return a gift i received?	yes, you can return the item within 30 days of delivery. the refund will be issued as store credit to the person who placed the order.
+returns	the courier did not come for my return pickup.	i am sorry for the inconvenience. i have rescheduled your return pickup for tomorrow. you will receive an sms before the pickup.
+refund	when will i get my refund for order <order_id>?	thank you for your patience. your refund has been initiated and will reflect in your account within 5 to 7 business days.
+refund	i have not received my refund yet.	i am sorry for the delay. i have checked your refund and it has been processed. it will reflect in your account within 5 to 7 business days.
+refund	my refund amount is wrong.	i am sorry for the trouble. i have raised a request with our billing team to review your refund. we will update you by email within 48 hours.
+refund	can i get the refund to my bank instead of store credit? write to <email>	yes, you can choose a bank refund. i have updated your refund method. your refund will reflect in your account within 5 to 7 business days.
+refund	it has been ten days and no refund.	i am sorry for the delay. i have escalated your refund to our billing team. we will update you by email within 48 hours.
+refund	was my refund processed for the cancelled order?	thank you for reaching out. your refund for the cancelled order has been processed and will reflect in your account within 5 to 7 business days.
+refund	why was my refund only partial?	thank you for reaching out. a partial refund was issued because one item in your order was not returned. please contact us if you have any questions.
+account	i forgot my password.	thank you for reaching out. you can reset your password by clicking forgot password on the login page. a reset link will be sent to your email address.
+account	i am not getting the otp on my phone <phone>.	i am sorry for the trouble. please check that your phone number is correct and try again after 2 minutes. if the problem continues, please contact us again.
+account	how do i change the email on my account?	thank you for reaching out. you can update your email address from the account settings page. a confirmation link will be sent to your new email address.
+account	my account is locked.	i am sorry for the trouble. your account was locked after several failed login attempts. i have unlocked your account and you can now reset your password.
+account	please delete my account and data. my email is <email>	thank you for reaching out. i have raised a request to delete your account. you will receive a confirmation email within 48 hours.
+account	i cannot log in to the app.	i am sorry for the trouble. please update the app to the latest version and try again. if the problem continues, you can reset your password from the login page.
+account	how do i unsubscribe from marketing emails?	thank you for reaching out. you can unsubscribe by clicking the link at the bottom of any marketing email or from the account settings page.
+payment	my payment failed but money was deducted.	i am sorry for the trouble. if the payment failed, the amount will be automatically refunded to your account within 5 to 7 business days.
+payment	which payment methods do you accept?	thank you for reaching out. we accept upi, credit cards, debit cards, net banking and cash on delivery for most orders.
+payment	i was charged twice for order <order_id>.	i am sorry for the trouble. i have checked your order <order_id> and raised a request with our billing team. the extra amount will be refunded within 5 to 7 business days.
+payment	can i pay with cash on delivery?	yes, cash on delivery is available for most orders. you can choose it on the payment page during checkout.
+payment	my coupon code is not working.	i am sorry for the trouble. please check that the coupon is valid for the items in your cart. some coupons have a minimum order value.
+payment	how do i get an invoice for my order?	thank you for reaching out. you can download the invoice from my orders once the order has been shipped.
+payment	the emi option is not showing.	thank you for reaching out. emi is available on orders above a minimum value with selected credit cards. please check the payment page for eligible options.
+product	is this phone available in blue?	thank you for reaching out. the colour options for each item are shown on the product page. if a colour is not listed, it is currently out of stock.
+product	when will the laptop be back in stock?	thank you for your interest. we do not have a confirmed restock date yet. you can click notify me on the product page to get an email when it is back in stock.
+product	does this blender come with a warranty?	yes, this item comes with a 1 year manufacturer warranty. the warranty details are shown on the product page.
+product	the product i received is different from the picture.	i am sorry to hear that. you can return the item within 30 days of delivery. we will arrange a free pickup from your address.
+product	is this jacket waterproof?	thank you for reaching out. the product details and materials are listed on the product page. please contact us if you have any other questions.
+product	i received a damaged item in order <order_id>.	i am sorry to hear that the item was damaged. i have raised a replacement request for you. we will arrange a free pickup from your address.
+product	can i get a replacement instead of a refund?	yes, you can choose a replacement. i have raised a replacement request for you. the new item will be shipped within 2 business days.
+general	hi, i need some help.	hi there, thank you for reaching out! please tell me how i can help you today.
+general	thanks for your help!	you are welcome! thank you for shopping with us. have a great day!
+general	can i talk to a human?	hi, i am a member of our support team and i am happy to help. please tell me how i can help you today.
+general	what are your customer care hours?	thank you for reaching out. our support team is available from 9 am to 9 pm, seven days a week.
+general	i want to make a complaint about the delivery agent.	i am sorry to hear about your experience. i have shared your feedback with our courier partner. we will update you by email within 48 hours.
