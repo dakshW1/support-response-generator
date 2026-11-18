@@ -101,9 +101,111 @@ def categories(path: Path = CLEAN_CORPUS) -> list[str]:
 
 
 # --- Milestone 2: Implement the n-gram model with smoothing.
-# Hint: Build the n-gram model and apply smoothing techniques as learned in `lfllm-lfnextword`.
-def milestone_2():  # TODO(milestone 2)
-    raise NotImplementedError("TODO(milestone 2)")
+
+class NGramModel:
+    """Word n-gram language model.
+
+    smoothing="add_k":        P(w | ctx) = (C(ctx, w) + k) / (C(ctx) + k * V)
+                              If the full context was never seen, back off to the
+                              longest shorter context that was seen.
+    smoothing="interpolated": P(w | ctx) = sum_i lambda_i * P_addk(w | last i words of ctx)
+                              mixing every order from n down to unigrams.
+    """
+
+    def __init__(self, n: int = 3, k: float = 0.01, smoothing: str = "add_k",
+                 lambdas: tuple[float, ...] | None = None):
+        if n < 1:
+            raise ValueError("n must be at least 1")
+        if smoothing not in ("add_k", "interpolated"):
+            raise ValueError("smoothing must be 'add_k' or 'interpolated'")
+        self.n, self.k, self.smoothing = n, k, smoothing
+        weights = lambdas or tuple(2.0 ** -i for i in range(n))  # highest order weighted most
+        if len(weights) != n:
+            raise ValueError("need one lambda per order")
+        total = sum(weights)
+        self.lambdas = tuple(w / total for w in weights)
+        # counts[order][context_tuple][word]; order 1 uses the empty context ()
+        self.counts: dict[int, dict[tuple, Counter]] = {o: defaultdict(Counter) for o in range(1, n + 1)}
+        self.vocab: set[str] = set()
+
+    def fit(self, sentences: list[list[str]]) -> "NGramModel":
+        word_freq = Counter(w for s in sentences for w in s)
+        self.vocab = set(word_freq) | {EOS, UNK}
+        for sent in sentences:
+            padded = [BOS] * (self.n - 1) + sent + [EOS]
+            for i in range(self.n - 1, len(padded)):
+                word = padded[i]
+                for order in range(1, self.n + 1):
+                    ctx = tuple(padded[i - order + 1:i])
+                    self.counts[order][ctx][word] += 1
+        return self
+
+    @property
+    def V(self) -> int:
+        return len(self.vocab)
+
+    def _norm(self, word: str) -> str:
+        return word if word in self.vocab or word == BOS else UNK
+
+    def _context(self, history: list[str]) -> tuple:
+        padded = [BOS] * (self.n - 1) + [self._norm(w) for w in history]
+        return tuple(padded[len(padded) - (self.n - 1):]) if self.n > 1 else ()
+
+    def _addk(self, word: str, ctx: tuple) -> float:
+        table = self.counts[len(ctx) + 1].get(ctx)
+        seen = table[word] if table else 0
+        total = sum(table.values()) if table else 0
+        return (seen + self.k) / (total + self.k * self.V)
+
+    def prob(self, word: str, history: list[str]) -> float:
+        """P(word | the last n-1 words of history)."""
+        word, ctx = self._norm(word), self._context(history)
+        if self.smoothing == "interpolated":
+            return sum(lam * self._addk(word, ctx[len(ctx) - (order - 1):] if order > 1 else ())
+                       for lam, order in zip(self.lambdas, range(self.n, 0, -1)))
+        # add-k with back-off to the longest context we have actually seen
+        while ctx and ctx not in self.counts[len(ctx) + 1]:
+            ctx = ctx[1:]
+        return self._addk(word, ctx)
+
+    def distribution(self, history: list[str]) -> dict[str, float]:
+        """Probability of every vocabulary word (except <unk>) following history."""
+        return {w: self.prob(w, history) for w in self.vocab if w != UNK}
+
+    def perplexity(self, sentences: list[list[str]]) -> float:
+        """exp of the average negative log-probability per token (including </s>). Lower is better."""
+        log_sum, count = 0.0, 0
+        for sent in sentences:
+            history: list[str] = []
+            for word in sent + [EOS]:
+                log_sum += -math.log(self.prob(word, history))
+                history.append(word)
+                count += 1
+        return math.exp(log_sum / count) if count else float("inf")
+
+
+def train(category: str | None = None, n: int = 3, k: float = 0.01,
+          smoothing: str = "add_k", path: Path = CLEAN_CORPUS) -> NGramModel:
+    """Train a model on all replies, or on one category (falls back to all if it is empty)."""
+    replies = load_replies(path, category) or load_replies(path)
+    return NGramModel(n=n, k=k, smoothing=smoothing).fit(replies)
+
+
+def evaluate(path: Path = CLEAN_CORPUS, test_every: int = 5,
+             settings: list[tuple[int, float, str]] | None = None) -> list[dict]:
+    """Hold out every `test_every`-th reply and report perplexity for several model settings."""
+    replies = load_replies(path)
+    train_set = [r for i, r in enumerate(replies) if i % test_every]
+    test_set = [r for i, r in enumerate(replies) if not i % test_every]
+    settings = settings or [(1, 1.0, "add_k"), (2, 1.0, "add_k"), (2, 0.1, "add_k"),
+                            (3, 1.0, "add_k"), (3, 0.1, "add_k"), (3, 0.01, "add_k"),
+                            (3, 0.1, "interpolated"), (4, 0.1, "interpolated")]
+    results = []
+    for n, k, smoothing in settings:
+        model = NGramModel(n=n, k=k, smoothing=smoothing).fit(train_set)
+        results.append({"n": n, "k": k, "smoothing": smoothing,
+                        "perplexity": round(model.perplexity(test_set), 2)})
+    return results
 
 
 # --- Milestone 3: Create a text generation function to suggest response continuations.

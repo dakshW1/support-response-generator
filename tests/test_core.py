@@ -40,9 +40,35 @@ def test_prepared_corpus_has_no_personal_data(corpus):
 
 
 # Milestone 2: Implement the n-gram model with smoothing.
-@pytest.mark.skip(reason="remove this line when you start milestone 2")
-def test_milestone_2():
-    raise NotImplementedError("write the test for milestone 2")
+TOY = [["the", "order", "shipped"], ["the", "order", "arrived"], ["the", "refund", "arrived"]]
+
+
+def test_mle_counts_turn_into_probabilities_without_smoothing():
+    model = core.NGramModel(n=2, k=0).fit(TOY)
+    assert model.prob("order", ["the"]) == pytest.approx(2 / 3)
+    assert model.prob("refund", ["the"]) == pytest.approx(1 / 3)
+    assert model.prob("shipped", ["the"]) == 0
+
+
+def test_add_k_gives_unseen_words_some_probability():
+    model = core.NGramModel(n=2, k=1).fit(TOY)
+    # V = {the, order, shipped, arrived, refund, </s>, <unk>} = 7 ; C(the) = 3
+    assert model.prob("shipped", ["the"]) == pytest.approx((0 + 1) / (3 + 7))
+    assert model.prob("never-seen-word", ["the"]) > 0
+
+
+@pytest.mark.parametrize("smoothing", ["add_k", "interpolated"])
+def test_distribution_sums_to_one(smoothing):
+    model = core.NGramModel(n=3, k=0.1, smoothing=smoothing).fit(TOY)
+    for history in ([], ["the"], ["the", "order"], ["unseen", "words"]):
+        total = sum(model.distribution(history).values()) + model.prob(core.UNK, history)
+        assert total == pytest.approx(1.0)
+
+
+def test_smoothing_lowers_perplexity_on_held_out_replies(corpus):
+    results = {(r["n"], r["k"], r["smoothing"]): r["perplexity"] for r in core.evaluate(corpus)}
+    assert all(math.isfinite(p) and p > 1 for p in results.values())
+    assert results[(3, 0.01, "add_k")] < results[(3, 1.0, "add_k")] < results[(1, 1.0, "add_k")]
 
 
 # Milestone 3: Create a text generation function to suggest response continuations.
