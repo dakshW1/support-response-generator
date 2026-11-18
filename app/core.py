@@ -209,9 +209,49 @@ def evaluate(path: Path = CLEAN_CORPUS, test_every: int = 5,
 
 
 # --- Milestone 3: Create a text generation function to suggest response continuations.
-# Hint: Implement the next-word prediction logic to generate continuations.
-def milestone_3():  # TODO(milestone 3)
-    raise NotImplementedError("TODO(milestone 3)")
+
+def suggest_next(model: NGramModel, prefix: str, top_k: int = 5) -> list[tuple[str, float]]:
+    """The top_k most likely next words after prefix, with their probabilities."""
+    dist = model.distribution(tokenize(prefix))
+    return sorted(dist.items(), key=lambda kv: (-kv[1], kv[0]))[:top_k]
+
+
+def _repeats(tokens: list[str], word: str, size: int) -> bool:
+    """True if appending word would repeat an n-gram of this size already in tokens."""
+    cand = tuple(tokens[-(size - 1):] + [word]) if size > 1 else (word,)
+    if len(cand) < size:
+        return False
+    return any(tuple(tokens[i:i + size]) == cand for i in range(len(tokens) - size + 1))
+
+
+def generate(model: NGramModel, prefix: str = "", max_words: int = 40, sample: bool = False,
+             temperature: float = 0.7, seed: int | None = None, top_k: int = 5,
+             no_repeat: int = 4) -> str:
+    """Continue prefix until </s> or max_words.
+
+    sample=False: greedy (always the most likely word) - stable, repeatable drafts.
+    sample=True:  sample among the top_k words, sharpened by temperature - varied drafts.
+                  Restricting to top_k matters: smoothing gives every unseen word a little
+                  mass, and over the whole vocabulary that adds up to most of the probability.
+    no_repeat:    never repeat an n-gram of this size, which stops greedy decoding from looping.
+    """
+    rng = random.Random(seed)
+    tokens = tokenize(prefix)
+    for _ in range(max_words):
+        ranked = sorted(model.distribution(tokens).items(), key=lambda kv: (-kv[1], kv[0] != EOS))
+        ranked = [(w, p) for w, p in ranked if w == EOS or not _repeats(tokens, w, no_repeat)]
+        if not ranked:
+            break
+        if sample:
+            pool = ranked[:max(top_k, 1)]
+            weights = [p ** (1.0 / max(temperature, 1e-6)) for _, p in pool]
+            nxt = rng.choices([w for w, _ in pool], weights=weights, k=1)[0]
+        else:
+            nxt = ranked[0][0]
+        if nxt == EOS:
+            break
+        tokens.append(nxt)
+    return detokenize(tokens)
 
 
 # --- Milestone 4: Build a command-line interface for agents to get suggestions.

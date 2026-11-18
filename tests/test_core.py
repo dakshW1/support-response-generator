@@ -72,9 +72,29 @@ def test_smoothing_lowers_perplexity_on_held_out_replies(corpus):
 
 
 # Milestone 3: Create a text generation function to suggest response continuations.
-@pytest.mark.skip(reason="remove this line when you start milestone 3")
-def test_milestone_3():
-    raise NotImplementedError("write the test for milestone 3")
+def test_suggest_next_ranks_the_common_continuation_first(corpus):
+    model = core.train(path=corpus)
+    words = [w for w, _ in core.suggest_next(model, "thank you for", top_k=3)]
+    assert words[0] == "reaching"
+    assert core.suggest_next(model, "you can return the", top_k=1)[0][0] == "item"
+
+
+def test_greedy_generation_is_repeatable_and_does_not_loop(corpus):
+    model = core.train(path=corpus)
+    draft = core.generate(model, "i am sorry", max_words=60)
+    assert draft.startswith("I am sorry")
+    assert draft == core.generate(model, "i am sorry", max_words=60)
+    toks = core.tokenize(draft)
+    fourgrams = [tuple(toks[i:i + 4]) for i in range(len(toks) - 3)]
+    assert len(fourgrams) == len(set(fourgrams))
+
+
+def test_sampling_is_seeded_and_category_changes_the_reply(corpus):
+    model = core.train(path=corpus)
+    assert core.generate(model, "your", sample=True, seed=7) == core.generate(model, "your", sample=True, seed=7)
+    refund = core.generate(core.train("refund", path=corpus))
+    account = core.generate(core.train("account", path=corpus))
+    assert refund != account
 
 
 # Milestone 4: Build a command-line interface for agents to get suggestions.
