@@ -54,8 +54,6 @@ def interactive(model: core.NGramModel, top_k: int = 5, inp=input, out=print) ->
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="support-response-generator", description="Customer support agents use this CLI tool to quickly draft responses to common queries by generating next-word suggestions based on a corpus of past support interactions.")
     sub = parser.add_subparsers(dest="command", required=True)
-    sub.add_parser("hello", help="check that everything is wired up")
-
     sub.add_parser("prepare", help="anonymise + clean corpus/raw_support_logs.tsv into corpus/support_corpus.tsv")
     sub.add_parser("categories", help="list the reply categories in the corpus")
 
@@ -81,9 +79,7 @@ def main(argv: list[str] | None = None) -> None:
 
     args = parser.parse_args(argv)
 
-    if args.command == "hello":
-        print("Support Response Generator is ready. Open README.md for your milestones.")
-    elif args.command == "prepare":
+    if args.command == "prepare":
         rows = core.prepare_corpus()
         print(f"Prepared {rows} anonymised interactions -> {core.CLEAN_CORPUS.relative_to(core.ROOT)}")
     elif args.command == "categories":

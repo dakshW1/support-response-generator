@@ -38,7 +38,7 @@ picks from numbered suggestions.
 
 ## Run it
 
-You need Python 3.12+ and git. No model, API key or `.env` is needed - everything runs locally from word counts.
+You need Python 3.12+ and git. No model or API key is needed - everything runs locally from word counts.
 
 ```bash
 python3.12 -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
@@ -120,7 +120,6 @@ app/core.py        corpus prep, NGramModel, suggestion + generation, evaluation
 app/cli.py         command-line interface
 corpus/            raw (fictional) logs and the anonymised, cleaned corpus
 tests/             one test block per milestone + the starter smoke tests
-app/llm.py, app/storage.py   starter plumbing (not used by the n-gram model)
 ```
 
 Built for the askThili drill *Build a Next-Word Predictor from Scratch*. Written with help from an AI coding
